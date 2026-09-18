@@ -6,7 +6,7 @@ app = Flask(__name__)
 app.config["SECRET_KEY"] = "2AZSMss3p5QPbcY2hBsJ"
 
 
-@app.route('/')
+@app.route("/")
 def index():
     return "Hello, Flaskbook!"
 
