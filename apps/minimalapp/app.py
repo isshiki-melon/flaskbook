@@ -1,4 +1,5 @@
 from flask import Flask, render_template, url_for, request, redirect, flash
+from email_validator import validate_email, EmailNotValidError
 
 app = Flask(__name__)
 
@@ -35,13 +36,33 @@ def contact_complete():
         description = request.form["description"]
 
         # 入力チェック
-        is_Valid = True
+        is_valid = True
 
         if not username:
             flash("ユーザーネームは必須です")
+            is_valid = False
+
+        if not email:
+            flash("メールアドレスは必須です")
+            is_valid = False
+
+        try:
+            validate_email(email)
+        except EmailNotValidError:
+            flash("メールアドレスの形式で入力してください")
+            is_valid = False
+
+        if not description:
+            flash("お問い合わせ内容は必須です")
+            is_valid = False
+
+        if not is_valid:
+            return redirect(url_for("contact"))
 
         # メールを送る
 
-        # contactエンドポイントへリダイレクトする
+        # 問い合わせ完了エンドポイントへリダイレクトする
+        flash("問い合わせありがとうございました。")
         return redirect(url_for("contact_complete"))
+
     return render_template("contact_complete.html")
